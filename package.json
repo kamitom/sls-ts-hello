@@ -10,6 +10,7 @@
     "lodash": "^4.17.11",
     "serverless-appsync-plugin": "^1.1.1",
     "serverless-offline": "^4.10.6",
+    "serverless-pseudo-parameters": "^2.4.0",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
