@@ -6,8 +6,6 @@ const _ = require('lodash')
 export const helloTsFunc: APIGatewayProxyHandler = async (event, _context) => {
     let lotest: [] = _.range(1911, 2019)
 
-    let test1: string = "100"
-
     return {
         statusCode: 200,
         body: JSON.stringify(
