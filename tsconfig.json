@@ -8,7 +8,7 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "target": "es2017",
-    "outDir": "lib"
+    "outDir": "./js_output"
   },
   "exclude": [
     "node_modules"
