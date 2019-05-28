@@ -12,7 +12,7 @@ export const helloTsFunc: APIGatewayProxyHandler = async (event, _context) => {
             {
                 message: 'Test: import lodash issue!',
                 input: event.body,
-                lodashTest: lotest,
+                lodashTest: lotest.length,
             },
             null,
             2
