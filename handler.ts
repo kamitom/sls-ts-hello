@@ -3,6 +3,8 @@ import 'source-map-support/register'
 // import * as _ from 'lodash'
 const _ = require('lodash')
 
+import foo from './foo'
+
 export const helloTsFunc: APIGatewayProxyHandler = async (event, _context) => {
     let lotest: [] = _.range(1911, 2019)
     let testVersion: string = 'v1.5'
@@ -12,8 +14,9 @@ export const helloTsFunc: APIGatewayProxyHandler = async (event, _context) => {
             {
                 message: 'Test: hello Cognito API ?!',
                 input: event,
-                lodashTest: lotest.length,
                 theVer: testVersion,
+                lodashTest: lotest.length,
+                theFoo: foo.foo1,
             },
             null,
             2
