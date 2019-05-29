@@ -1,0 +1,503 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface User {
+  id: ID!
+  name: String!
+  photo: S3Object
+}
+
+type ActivityEvent {
+  dateTime: AWSDateTime!
+  id: ID!
+  type: ActivityEventType!
+}
+
+type ActivityRecord {
+  date: AWSDate!
+  events: [ActivityEvent!]
+  fallingCount: Int
+  id: ID!
+  sitDurationInSeconds: Int
+  standDurationInSeconds: Int
+}
+
+type ActivityRecordConnection {
+  items: [ActivityRecord!]!
+  nextToken: String
+}
+
+type Call {
+  callee: DeviceMember!
+  caller: DeviceMember!
+  endAt: AWSTimestamp!
+  id: ID!
+  media: CallMedia!
+  startAt: AWSTimestamp!
+  success: Boolean!
+}
+
+type CallConnection {
+  items: [Call]
+  nextToken: String
+}
+
+type CreateDeviceMemberPairingTokenResult {
+  expireAt: AWSTimestamp!
+  pairingToken: String!
+}
+
+type CreateWatchPointResult {
+  watchPoint: WatchPoint!
+}
+
+type DeleteMobileUserPhotoResult {
+  photo: S3Object
+}
+
+type DeleteWatchPointResult {
+  watchPoint: WatchPoint!
+}
+
+type Device {
+  calls(limit: Int, nextToken: String): CallConnection
+  id: ID!
+  members: DeviceMemberConnection
+  owner: DeviceUser!
+  settings: DeviceSettings!
+}
+
+type DeviceConnection {
+  items: [Device]
+  nextToken: String
+}
+
+type DeviceMember {
+  id: ID!
+  name: String!
+  photo: S3Object
+  role: DeviceMemberRole!
+}
+
+type DeviceMemberConnection {
+  items: [DeviceMember]
+  nextToken: String
+}
+
+type DeviceSettings {
+  controlEnabled: Boolean!
+  speed: Int!
+}
+
+type DeviceUser implements User {
+  assistiveDevice: AssistiveDevice
+  birthday: AWSDate
+  device: Device!
+  gender: Gender
+  getUpTime: AWSTime
+  height: Int
+  id: ID!
+  isVegetarian: Boolean
+  language: Language
+  name: String!
+  photo: S3Object
+  sleepTime: AWSTime
+  weight: Int
+}
+
+type EmotionRecord {
+  date: AWSDate!
+  emotion: Emotion!
+  id: ID!
+}
+
+type EmotionRecordConnection {
+  items: [EmotionRecord!]!
+  nextToken: String
+}
+
+type MealDailyRecord {
+  breakfastDishes: [MealDish!]!
+  date: AWSDate!
+  dinnerDishes: [MealDish!]!
+  id: ID!
+  lunchDishes: [MealDish!]!
+}
+
+type MealDish {
+  isLeftOverMeal: Boolean!
+  remaining: Float!
+  type: MealType!
+}
+
+type MealRecordConnection {
+  items: [MealDailyRecord!]!
+  nextToken: String
+}
+
+type MobileUser implements User {
+  birthday: AWSDate
+  devices: DeviceConnection
+  email: AWSEmail
+  id: ID!
+  name: String!
+  photo: S3Object
+}
+
+type Mutation {
+  addDeviceMember(
+    deviceId: ID!
+    mobileUserId: ID!
+    role: DeviceMemberRole!
+  ): UpdateDeviceMemberResult
+  createDeviceMemberPairingToken(
+    input: CreateDeviceMemberPairingTokenInput!
+  ): CreateDeviceMemberPairingTokenResult!
+  createWatchPoint(input: CreateWatchPointInput!): CreateWatchPointResult
+  deleteCall(callId: ID!, deviceId: ID!): UpdateCallResult
+  deleteDeviceMember(
+    deviceId: ID!
+    deviceMemberId: ID!
+  ): UpdateDeviceMemberResult
+  deleteMobileUserPhoto(
+    input: DeleteMobileUserPhotoInput!
+  ): DeleteMobileUserPhotoResult
+  deleteWatchPoint(input: DeleteWatchPointInput!): DeleteWatchPointResult
+  editDeviceMemberRole(
+    deviceId: ID!
+    deviceMemberId: ID!
+    role: DeviceMemberRole!
+  ): UpdateDeviceMemberResult
+  editDeviceSettings(
+    deviceId: ID!
+    settings: DeviceSettingsInput!
+  ): UpdateDeviceSettingsResult
+  editDeviceUserSettings(
+    deviceUserId: ID
+    photo: S3ObjectInput
+    settings: DeviceUserSettingsInput!
+  ): UpdateDeviceUserSettingsResult
+  editMobileUserSettings(
+    photo: S3ObjectInput
+    settings: MobileUserSettingsInput!
+  ): UpdateMobileUserSettingsResult
+  endCall(callId: ID!, deviceId: ID!): UpdateCallResult
+  markDevicePairableFor(phone: AWSPhone!): PairRequest
+  pairDevice(pairCode: String!): Device!
+  pairDeviceMember(input: PairDeviceMemberInput!): PairDeviceMemberResult!
+  registerPushEndpoint(token: String!, type: PushEndpointType!): PushEndpoint
+  startCall(calleeId: ID!, deviceId: ID!, media: CallMedia!): UpdateCallResult
+  unRegisterPushEndpoint(
+    input: UnRegisterPushEndpointInput!
+  ): UnRegisterPushEndpointResult
+  unpairDevice(deviceId: ID!): Device!
+  updateDeviceUser(input: UpdateDeviceUserInput!): UpdateDeviceUserResult
+  updateMobileUser(input: UpdateMobileUserInput!): UpdateMobileUserResult
+  updatePushEndpointToken(pushEndpointId: ID!, token: String!): PushEndpoint
+  updateWatchPoint(input: UpdateWatchPointInput!): UpdateWatchPointResult
+}
+
+type PairDeviceMemberResult {
+  deviceMember: DeviceMember!
+}
+
+type PairDeviceResult {
+  device: Device!
+}
+
+type PairRequest {
+  expireAt: AWSTimestamp!
+  pairCode: String!
+}
+
+type PushEndpoint {
+  enabled: Boolean!
+  id: ID!
+  token: String!
+}
+
+type Query {
+  allActivityRecords(deviceUserId: ID!): ActivityRecordConnection!
+  allDevices: DeviceConnection!
+  allEmotionRecords(deviceUserId: ID!): EmotionRecordConnection!
+  allMealRecords(deviceUserId: ID!): MealRecordConnection!
+  allSleepRecords(deviceUserId: ID!): SleepRecordConnection!
+  allWatchPoints(deviceUserId: ID!): WatchPointConnection!
+  getMobileUserByPhone(phone: AWSPhone!): MobileUser
+  getPushEndpointById(pushEndpointId: ID!): PushEndpoint
+  me: User
+}
+
+type S3Object {
+  bucket: String!
+  key: String!
+  region: String!
+}
+
+type SleepRecord {
+  averageBreathCount: Int!
+  averageHeartbeatCount: Int!
+  date: AWSDate!
+  endAt: AWSTimestamp!
+  id: ID!
+  startAt: AWSTimestamp!
+  totalTurnOverCount: Int!
+}
+
+type SleepRecordConnection {
+  items: [SleepRecord!]!
+  nextToken: String
+}
+
+type Subscription {
+  pairedDevice(id: ID!): Device @aws_subscribe(mutations: ["pairDevice"])
+  unpairedDevice(id: ID!): Device @aws_subscribe(mutations: ["unpairDevice"])
+  updatedCall(deviceId: ID!): UpdateCallResult
+    @aws_subscribe(mutations: ["startCall", "endCall", "deleteCall"])
+  updatedDeviceMember(deviceId: ID!): UpdateDeviceMemberResult
+    @aws_subscribe(
+      mutations: [
+        "addDeviceMember"
+        "deleteDeviceMember"
+        "editDeviceMemberRole"
+      ]
+    )
+}
+
+type UnRegisterPushEndpointResult {
+  pushEndpointId: ID!
+}
+
+type UpdateCallResult {
+  call: Call!
+  deviceId: ID!
+  updateType: UpdateCallType!
+}
+
+type UpdateDeviceMemberResult {
+  deviceId: ID!
+  member: DeviceMember!
+  updateType: UpdateDeviceMemberType!
+}
+
+type UpdateDeviceSettingsResult {
+  device: Device
+}
+
+type UpdateDeviceUserPhotoResult {
+  user: DeviceUser
+}
+
+type UpdateDeviceUserResult {
+  deviceUser: DeviceUser!
+}
+
+type UpdateDeviceUserSettingsResult {
+  user: DeviceUser
+}
+
+type UpdateMobileUserResult {
+  mobileUser: MobileUser!
+}
+
+type UpdateMobileUserSettingsResult {
+  user: MobileUser
+}
+
+type UpdateWatchPointResult {
+  watchPoint: WatchPoint!
+}
+
+type WatchPoint {
+  description: String!
+  id: ID!
+  location: String!
+  photo: S3Object
+}
+
+type WatchPointConnection {
+  items: [WatchPoint!]!
+  nextToken: String
+}
+
+enum ActivityEventType {
+  BREAKFAST
+  DINNER
+  FALLING
+  GETUP
+  LUNCH
+  SLEEP
+  SNACK
+}
+
+enum AssistiveDevice {
+  CRUTCH
+  NONE
+  OTHER
+  WALKER
+}
+
+enum CallMedia {
+  AUDIO
+  VIDEO
+}
+
+enum DeviceMemberRole {
+  ADMIN
+  EDITOR
+  OWNER
+  VIEWER
+}
+
+enum Emotion {
+  ANGRY
+  HAPPY
+  NORMAL
+  SAD
+}
+
+enum Gender {
+  FEMALE
+  MAN
+}
+
+enum Language {
+  CHINESE
+  TAIWANESE
+}
+
+enum MealType {
+  FRUIT
+  MEAT
+  MIXED
+  RICE
+  UNKNOWN
+  VEGETABLE
+}
+
+enum PushEndpointType {
+  APNS
+  APNS_VOIP
+  FCM
+}
+
+enum UpdateCallType {
+  ADD
+  DELETE
+  EDIT
+}
+
+enum UpdateDeviceMemberType {
+  ADD
+  DELETE
+  EDIT
+}
+
+input CreateDeviceMemberPairingTokenInput {
+  deviceId: ID!
+}
+
+input CreateWatchPointInput {
+  description: String!
+  deviceUserId: ID!
+  location: String!
+  photo: S3PhotoInput
+}
+
+input DeleteMobileUserPhotoInput {
+  deviceId: ID!
+  mobileUserId: ID!
+}
+
+input DeleteWatchPointInput {
+  deviceUserId: ID!
+  watchPointId: ID!
+}
+
+input DeviceSettingsInput {
+  controlEnabled: Boolean
+  speed: Int
+}
+
+input DeviceUserSettingsInput {
+  assistiveDevice: AssistiveDevice
+  birthday: AWSDate
+  gender: Gender
+  getUpTime: AWSTime
+  height: Int
+  isVegetarian: Boolean
+  language: Language
+  name: String
+  sleepTime: AWSTime
+  weight: Int
+}
+
+input MobileUserSettingsInput {
+  birthday: AWSDate
+  email: AWSEmail
+  name: String
+}
+
+input PairDeviceMemberInput {
+  mobileUserId: ID!
+  pairingToken: String!
+}
+
+input S3ObjectInput {
+  bucket: String!
+  key: String!
+  localUri: String!
+  mimeType: String!
+  region: String!
+}
+
+input S3PhotoInput {
+  bucket: String!
+  key: String!
+  region: String!
+}
+
+input UnRegisterPushEndpointInput {
+  pushEndpointId: ID!
+  userId: ID!
+}
+
+input UpdateDeviceUserInput {
+  assistiveDevice: AssistiveDevice
+  birthday: AWSDate
+  deviceId: ID
+  deviceUserId: ID!
+  gender: Gender
+  getUpTime: AWSTime
+  height: Int
+  isVegetarian: Boolean
+  language: Language
+  name: String
+  photo: S3PhotoInput
+  sleepTime: AWSTime
+  weight: Int
+}
+
+input UpdateDeviceUserPhotoInput {
+  photo: S3ObjectInput!
+}
+
+input UpdateMobileUserInput {
+  birthday: AWSDate
+  deviceId: ID
+  email: AWSEmail
+  mobileUserId: ID!
+  name: String
+  photo: S3PhotoInput
+}
+
+input UpdateWatchPointInput {
+  description: String
+  deviceUserId: ID!
+  location: String
+  photo: S3PhotoInput
+  watchPointId: ID!
+}
