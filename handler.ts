@@ -10,7 +10,7 @@ export const helloTsFunc: APIGatewayProxyHandler = async (event, _context) => {
         statusCode: 200,
         body: JSON.stringify(
             {
-                message: 'Test: import lodash issue!',
+                message: 'Test: hello Cognito API ?!',
                 input: event,
                 lodashTest: lotest.length,
                 theVer: testVersion,
