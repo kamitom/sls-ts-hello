@@ -6,6 +6,7 @@ plugins:
   - serverless-webpack
   - serverless-offline
   - serverless-appsync-plugin
+  - serverless-pseudo-parameters
 
 custom:
   stage: ${opt:stage, self:provider.stage}
@@ -41,6 +42,14 @@ provider:
 
   # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource:
+        - '*'
+        # - 'arn:aws:sts::#{AWS::AccountId}:assumed-role/*'
+      # Resource:
+      # - 'arn:aws:sts::461716780826:assumed-role/ts-api-test-tom-dev1-ap-northeast-1-lambdaRole/ts-api-test-tom-dev1-jsAwsSnsFunc'
     - Effect: 'Allow'
       Action:
         - 'cognito-idp:ListUsers'
@@ -69,6 +78,22 @@ functions:
     events:
       - http:
           path: math/ts-add
+          method: post
+          cors: true
+
+  tsAwsSnsFunc:
+    handler: functions/testAwsSns.handleSNS
+    events:
+      - http:
+          path: sns/send
+          method: post
+          cors: true
+
+  jsAwsSnsFunc:
+    handler: functions/publishSNS.publishSnsTest
+    events:
+      - http:
+          path: sns/jssend
           method: post
           cors: true
 
