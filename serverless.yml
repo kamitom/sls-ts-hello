@@ -19,8 +19,8 @@ custom:
       - dataSource: GetMobileUserByPhone
         type: Query
         field: getMobileUserByPhone
-        request: 'getMobileUserByPhone-request.vtl'
-        response: 'getMobileUserByPhone-response.vtl'
+        request: "getMobileUserByPhone-request.vtl"
+        response: "getMobileUserByPhone-response.vtl"
       # - dataSource: SetPassword
       #   type: Mutation
       #   field: setPassword
@@ -37,8 +37,8 @@ provider:
   runtime: nodejs8.10
   stage: test
   region: ap-northeast-1
-  memorySize: 256
-  timeout: 10
+  memorySize: 128
+  timeout: 9
 
   # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
@@ -46,17 +46,33 @@ provider:
       Action:
         - SNS:Publish
       Resource:
-        - '*'
+        - "*"
         # - 'arn:aws:sts::#{AWS::AccountId}:assumed-role/*'
       # Resource:
       # - 'arn:aws:sts::461716780826:assumed-role/ts-api-test-tom-dev1-ap-northeast-1-lambdaRole/ts-api-test-tom-dev1-jsAwsSnsFunc'
-    - Effect: 'Allow'
+    - Effect: "Allow"
       Action:
-        - 'cognito-idp:ListUsers'
+        - "cognito-idp:ListUsers"
       Resource:
-        - 'arn:aws:cognito-idp:ap-northeast-1:461716780826:userpool/ap-northeast-1_iH1FAARf3'
+        - "arn:aws:cognito-idp:ap-northeast-1:461716780826:userpool/ap-northeast-1_iH1FAARf3"
         # - "arn:aws:cognito-idp:ap-southeast-1:461716780826:userpool/ap-southeast-1_ntfECmrjH"
-
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource:
+        {
+          "Fn::Join":
+            ["", ["arn:aws:s3:::", { "Ref": "ServerlessDeploymentBucket" }]],
+        }
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - "Ref": "ServerlessDeploymentBucket"
+            - "/*"
 functions:
   tsHelloFunc:
     handler: handler.helloTsFunc
@@ -69,16 +85,19 @@ functions:
     handler: jsadd.addus
     events:
       - http:
-          path: math/js-add
+          path: math/js-add/{operation}
           method: post
+          integration: lambda
           cors: true
 
   tsAddFunc:
     handler: tsadd.tsAddUs
     events:
       - http:
-          path: math/ts-add
+          path: math/ts-add/{operation}
           method: post
+          # integration: lambda-proxy
+          integration: lambda
           cors: true
 
   tsAwsSnsFunc:
@@ -97,31 +116,40 @@ functions:
           method: post
           cors: true
 
+  tsresizeImagesFunc:
+    handler: functions/tsresizeImages.handlerS3
+    events:
+      - http:
+          path: s3test/allfiles
+          method: get
+          integration: lambda
+          cors: true
+
   getMobileUserByPhone:
     handler: functions/getMobileUserByPhone.handler
 
 resources:
   Resources:
     AppSyncServiceRole:
-      Type: 'AWS::IAM::Role'
+      Type: "AWS::IAM::Role"
       Properties:
         AssumeRolePolicyDocument:
-          Version: '2012-10-17'
+          Version: "2012-10-17"
           Statement:
-            - Effect: 'Allow'
+            - Effect: "Allow"
               Principal:
                 Service:
-                  - 'appsync.amazonaws.com'
+                  - "appsync.amazonaws.com"
               Action:
-                - 'sts:AssumeRole'
+                - "sts:AssumeRole"
         Policies:
-          - PolicyName: 'LambdaInvokePolicy'
+          - PolicyName: "LambdaInvokePolicy"
             PolicyDocument:
-              Version: '2012-10-17'
+              Version: "2012-10-17"
               Statement:
-                - Effect: 'Allow'
+                - Effect: "Allow"
                   Action:
-                    - 'lambda:invokeFunction'
+                    - "lambda:invokeFunction"
                   Resource:
-                    - 'arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql'
-                    - 'arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql:*'
+                    - "arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql"
+                    - "arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql:*"
