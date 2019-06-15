@@ -56,23 +56,7 @@ provider:
       Resource:
         - "arn:aws:cognito-idp:ap-northeast-1:461716780826:userpool/ap-northeast-1_iH1FAARf3"
         # - "arn:aws:cognito-idp:ap-southeast-1:461716780826:userpool/ap-southeast-1_ntfECmrjH"
-    - Effect: "Allow"
-      Action:
-        - "s3:ListBucket"
-      Resource:
-        {
-          "Fn::Join":
-            ["", ["arn:aws:s3:::", { "Ref": "ServerlessDeploymentBucket" }]],
-        }
-    - Effect: "Allow"
-      Action:
-        - "s3:PutObject"
-      Resource:
-        Fn::Join:
-          - ""
-          - - "arn:aws:s3:::"
-            - "Ref": "ServerlessDeploymentBucket"
-            - "/*"
+
 functions:
   tsHelloFunc:
     handler: handler.helloTsFunc
@@ -124,32 +108,25 @@ functions:
           method: get
           integration: lambda
           cors: true
+      - s3:
+          bucket: tom-photos
+          # event: s3:ObjectCreated:*
+          event: s3:ObjectCreated:Put
+          rules:
+            - prefix: uploads/
+            - suffix: .png
+      - s3:
+          bucket: tom-photos-dest
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: tests/
+            - suffix: .docx
 
   getMobileUserByPhone:
     handler: functions/getMobileUserByPhone.handler
 
 resources:
-  Resources:
-    AppSyncServiceRole:
-      Type: "AWS::IAM::Role"
-      Properties:
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: "Allow"
-              Principal:
-                Service:
-                  - "appsync.amazonaws.com"
-              Action:
-                - "sts:AssumeRole"
-        Policies:
-          - PolicyName: "LambdaInvokePolicy"
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                - Effect: "Allow"
-                  Action:
-                    - "lambda:invokeFunction"
-                  Resource:
-                    - "arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql"
-                    - "arn:aws:${self:custom.region}:*:function:${self:service}-${self:custom.stage}-graphql:*"
+  # DynamoDB
+  # - ${file(resources/general.yml)}
+  # S3
+  # - ${file(resources/s3-bucket.yml)}
