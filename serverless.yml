@@ -49,11 +49,14 @@ provider:
         - "*"
     - Effect: Allow
       Action:
-        - s3:*
-        # - s3:Get*
-        # - s3:List*
+        # - s3:*
+        - s3:Get*
+        - s3:List*
+        - s3:Put*
       Resource:
-        - "*"
+        # - "*"
+        - "arn:aws:s3:::tom-photos/*"
+        - "arn:aws:s3:::tom-photos-dest/*"
     - Effect: "Allow"
       Action:
         - "cognito-idp:ListUsers"
