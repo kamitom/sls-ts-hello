@@ -104,7 +104,7 @@ functions:
     handler: functions/tsresizeImages.handlerS3
     events:
       - http:
-          path: s3test/allfiles
+          path: s3test/upload
           method: get
           integration: lambda
           cors: true
