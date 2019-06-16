@@ -1,5 +1,5 @@
 Resources:
-  AttachmentsBucket:
+  tomAttachmentsBucket:
     Type: AWS::S3::Bucket
     Properties:
       # Set the CORS policy
@@ -17,7 +17,7 @@ Resources:
               - DELETE
               - HEAD
             MaxAge: 3000
-  AttachmentsBucketDest:
+  tomAttachmentsBucketDest:
     Type: AWS::S3::Bucket
     Properties:
       # Set the CORS policy
@@ -40,11 +40,11 @@ Resources:
 Outputs:
   TomPhotos2Key:
     Value:
-      Ref: AttachmentsBucket
+      Ref: tomAttachmentsBucket
     Export:
       Name: ${self:custom.stage}-tom-photos
   TomPhotos2destKey:
     Value:
-      Ref: AttachmentsBucketDest
+      Ref: tomAttachmentsBucketDest
     Export:
       Name: ${self:custom.stage}-tom-photos-dest
