@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports.addus = async (event) => {
-  console.log("hi :", event)
+  console.log("hi :", event);
   // TODO implement
   try {
 
@@ -9,34 +9,34 @@ module.exports.addus = async (event) => {
     let {
       operand1,
       operand2
-    } = event.input
+    } = event.input;
 
     if (!operand1 || !operand2) {
-      throw new Error('operand can not destructure.')
+      throw new Error("operand can not destructure.");
     }
 
     let result;
     switch (event.operation) {
-      case 'add':
-        // code
-        result = operand1 + operand2
-        break;
-      case 'sub':
-        // code
-        result = operand1 - operand2
-        break;
-      case 'multiply':
-        // code
-        result = operand1 * operand2
-        break;
-      case 'devide':
-        // code
-        result = operand1 / operand2
-        break;
+    case "add":
+      // code
+      result = operand1 + operand2;
+      break;
+    case "sub":
+      // code
+      result = operand1 - operand2;
+      break;
+    case "multiply":
+      // code
+      result = operand1 * operand2;
+      break;
+    case "devide":
+      // code
+      result = operand1 / operand2;
+      break;
 
-      default:
-        // code
-        result = null;
+    default:
+      // code
+      result = null;
     }
 
 
@@ -51,7 +51,7 @@ module.exports.addus = async (event) => {
     return {
       statusCode: 400,
       body: `Error: ${e.message}`
-    }
+    };
   }
 
 
