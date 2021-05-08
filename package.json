@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "serverless-appsync-plugin": "^1.1.1",
     "serverless-offline": "^4.10.6",
     "serverless-pseudo-parameters": "^2.4.0",
